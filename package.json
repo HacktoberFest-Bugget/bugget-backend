@@ -20,6 +20,7 @@
   "description": "",
   "dependencies": {
     "express": "^5.1.0",
+    "openai": "^6.5.0",
     "simple-git": "^3.28.0"
   },
   "devDependencies": {
