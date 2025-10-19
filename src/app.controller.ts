@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -30,5 +30,12 @@ export class AppController {
     }
 
     return sortedData;
+  }
+
+  @Post()
+  login(@Body() requestData: { email: string; password: string }) {
+    // performLogin();
+    // Imagine if this was full login flow.
+    console.log(requestData);
   }
 }
