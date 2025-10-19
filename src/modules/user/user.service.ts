@@ -32,7 +32,15 @@ export class UserService {
 
   async generateKey(dto: GenerateKeyDto): Promise<void> {
     try {
+      const existKey = await this.userRepository.findOneBy({
+        email: dto.email,
+      });
+
       const hash = crypto.createHash('sha256').update(dto.email).digest('hex');
+
+      if (existKey) {
+        await this.userRepository.delete({ id: existKey.id });
+      }
 
       await this.userRepository.insert({
         email: dto.email,
