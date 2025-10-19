@@ -5,12 +5,13 @@ import * as path from 'node:path';
 
 @Injectable()
 export class SimpleGitService {
-  getDiff(dto: GetDiffDto) {
+  async getDiff(dto: GetDiffDto) {
     try {
-      const repository = path.resolve(__dirname);
+      const repository = path.resolve(__dirname, '../../..');
       const git = simpleGit(repository);
+      await git.branch();
 
-      return git.diff([dto.fromBranch, dto.toBranch]);
+      return git.diff([`origin/${dto.fromBranch}`, `origin/${dto.toBranch}`]);
     } catch (error) {
       console.log(error);
       throw new BadRequestException('Could not define difference');
