@@ -43,7 +43,7 @@ export class DocumentationService {
       return (await this.fileRepository
         .createQueryBuilder()
         .select('id, filename')
-        .where('repository = :repository', { repository: 'bugget_backend' })
+        .where('repository = :repository', { repository: 'bugget-backend' })
         .execute()) as Array<Partial<FileEntity>>;
     } catch (error) {
       console.log(error);

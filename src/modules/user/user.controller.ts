@@ -9,7 +9,9 @@ export class UserController {
 
   @Get('me')
   async me(@Query() dto: MeDto) {
-    return await this.userService.getKey(dto);
+    return {
+      key: await this.userService.getKey(dto),
+    };
   }
 
   @Post('generate-key')
