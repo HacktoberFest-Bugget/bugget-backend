@@ -1,0 +1,41 @@
+name: CI Request Test
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  send-pr-data:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Send PR info via cURL
+        run: |
+          REPO="${GITHUB_REPOSITORY}"
+          FROM_BRANCH="${{ github.event.pull_request.head.ref }}"
+          TO_BRANCH="${{ github.event.pull_request.base.ref }}"
+
+          echo "Repository: $REPO"
+          echo "From branch: $FROM_BRANCH"
+          echo "To branch: $TO_BRANCH"
+
+          DATA=$(jq -n \
+            --arg repo "$REPO" \
+            --arg from "$FROM_BRANCH" \
+            --arg to "$TO_BRANCH" \
+            '{repository:$repo, fromBranch:$from, toBranch:$to}')
+
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -H "ngrok-skip-browser-warning: 1" \
+            -d "$DATA" \
+            "https://preindustrial-hiedi-spotlessly.ngrok-free.dev/documentation")
+
+          echo "Response code: $RESPONSE"
+          if [ "$RESPONSE" -ne 201 ]; then
+            echo "Request failed!"
+            exit 1
+          fi
