@@ -31,6 +31,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-base-to-string': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
 );
