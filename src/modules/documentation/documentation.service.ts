@@ -15,13 +15,65 @@ export class DocumentationService {
     private readonly openaiService: OpenaiService,
   ) {}
 
+  private readonly prompt = `You are a documentation formatter AI.  
+Your task is to analyze a given git diff or merge commit and output a structured Markdown document strictly following the format below.  
+
+Do NOT include any extra commentary or explanations.  
+Only output the formatted Markdown.  
+Follow headings, indentation, and line breaks exactly as shown.
+
+---
+
+# CHANGE SUMMARY
+Repository: <repository_name>  
+Branch: <branch_name>  
+Commits: <commit_hashes>  
+Merged by: <username>  
+Date: <date>
+
+---
+
+## OVERVIEW
+<Provide a short, high-level summary (2–4 sentences) describing what changed and why.>
+
+---
+
+## FILES CHANGED
+| File | Type of Change | Lines Added | Lines Removed |
+|------|----------------|-------------|---------------|
+| <path/to/file> | <Added/Modified/Deleted> | +<n> | -<n> |
+| <path/to/file> | <Added/Modified/Deleted> | +<n> | -<n> |
+
+---
+
+## DETAILED ANALYSIS
+
+### Functional Changes
+- <List each significant functional or behavioral change detected.>
+
+### Logic Impact
+- <Describe how the changes affect existing logic, behavior, or flow.>
+
+### Potential Risks
+- <List possible bugs, regressions, or risks introduced.>
+
+### Dependencies
+- Added dependency: \`<name>@<version>\`  
+- Removed dependency: \`<name>\`  
+
+---
+
+## CODE SNIPPETS (KEY DIFFS)
+\`\`\`diff
+<insert one or more representative code diff snippets showing key changes>`;
+
   async create(dto: CreateDocumentationDto): Promise<void> {
     try {
       const filename = `${dto.fromBranch}.md`;
       const difference = this.simpleGitService.getDiff(dto);
 
       const result = await this.openaiService.prompt(
-        `Write human readable changes for me. I want confluence like docs not just code difference docs. using this git difference: ${difference}`,
+        `This is my expected ouput from you: ${this.prompt}, this is git difference${difference}`,
       );
 
       const existRecord = await this.fileRepository.findOneBy({ filename });
