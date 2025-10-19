@@ -21,22 +21,23 @@ export class DocumentationService {
     try {
       const filename = `${dto.fromBranch}.md`;
       const difference = this.simpleGitService.getDiff(dto);
-      const currentBranchInfo = await this.simpleGitService.getBranchDetails();
 
-      const result = await this.openaiService.prompt(
-        `This is my expected output from you: ${this.prompt}.\n
-        This is current branch info ${currentBranchInfo} \n
-        this is git difference: ${difference}`,
-      );
+      // const result = await this.openaiService.prompt(
+      //   `This is my expected output from you: ${this.prompt}.\n
+      //   this is git difference: ${difference}`,
+      // );
 
-      const existRecord = await this.fileRepository.findOneBy({ filename });
+      console.log(difference);
 
-      await this.fileRepository.insert({
-        id: existRecord?.id ?? undefined,
-        repository: dto.repository,
-        content: result,
-        filename: filename,
-      });
+      //
+      // const existRecord = await this.fileRepository.findOneBy({ filename });
+      //
+      // await this.fileRepository.insert({
+      //   id: existRecord?.id ?? undefined,
+      //   repository: dto.repository,
+      //   content: result,
+      //   filename: filename,
+      // });
     } catch (error) {
       console.log(error);
       throw new BadRequestException('Could not create document');
