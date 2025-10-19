@@ -1,10 +1,9 @@
 name: CI Request Test
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch: # Allows manual triggering
+  pull_request:
+    types: [ closed ]
+
 
 jobs:
   send-pr-data:
