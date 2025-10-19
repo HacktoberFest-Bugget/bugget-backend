@@ -20,12 +20,12 @@ export class DocumentationService {
   async create(dto: CreateDocumentationDto): Promise<void> {
     try {
       const filename = `${dto.fromBranch}.md`;
-      const difference = this.simpleGitService.getDiff(dto);
-
+      const difference = await this.simpleGitService.getDiff(dto);
       const result = await this.openaiService.prompt(
         `This is my expected output from you: ${this.prompt}.\n
-        this is git difference: ${difference}`,
+        this is git difference: ${JSON.stringify(difference)}`,
       );
+      console.log(result);
 
       const existRecord = await this.fileRepository.findOneBy({ filename });
 
