@@ -5,10 +5,11 @@ import { SimpleGitModule } from '../simple-git/simple-git.module';
 import { OpenaiModule } from '../openai/openai.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FileEntity } from './entities/file.entity';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FileEntity]),
+    TypeOrmModule.forFeature([FileEntity, UserEntity]),
     SimpleGitModule,
     OpenaiModule,
   ],

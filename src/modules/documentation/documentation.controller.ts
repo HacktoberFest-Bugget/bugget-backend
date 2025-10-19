@@ -1,8 +1,18 @@
-import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { DocumentationService } from './documentation.service';
 import { CreateDocumentationDto } from './dto/create-documentation.dto';
 import type { Response } from 'express';
+import { AuthGuard } from '../guards/app.guard';
 
+@UseGuards(AuthGuard)
 @Controller('documentation')
 export class DocumentationController {
   constructor(private readonly documentationService: DocumentationService) {}
