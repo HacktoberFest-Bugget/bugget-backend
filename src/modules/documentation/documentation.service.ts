@@ -29,9 +29,11 @@ export class DocumentationService {
 
       const existRecord = await this.fileRepository.findOneBy({ filename });
 
+      const repositoryName = dto.repository.split('/')[1];
+
       await this.fileRepository.insert({
         id: existRecord?.id ?? undefined,
-        repository: dto.repository,
+        repository: repositoryName,
         content: result,
         filename: filename,
       });
