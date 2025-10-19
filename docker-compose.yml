@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  Bugget:
+    image: postgres:latest
+    container_name: Bugget
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: bugget_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data_master:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_master:
