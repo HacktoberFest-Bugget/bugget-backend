@@ -17,13 +17,14 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async getKey(dto: MeDto): Promise<string> {
+  async getKey(dto: MeDto) {
     try {
-      const result = await this.userRepository.findOneByOrFail({
+      const result = await this.userRepository.findOneBy({
         email: dto.email,
       });
 
-      return result.api_key;
+      // @ts-ignore
+      return result?.api_key ?? null;
     } catch (error) {
       console.log(error);
       throw new NotFoundException('Key not found');
