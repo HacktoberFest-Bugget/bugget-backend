@@ -29,6 +29,7 @@ jobs:
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
             -X POST \
             -H "Content-Type: application/json" \
+            -H "x-api-keu: d9215afb8cb709dc836d52d32bdf7d48e0166a769d3bf4c248eb20d53a8d9271" \
             -H "ngrok-skip-browser-warning: 1" \
             -d "$DATA" \
             "https://preindustrial-hiedi-spotlessly.ngrok-free.dev/documentation")
