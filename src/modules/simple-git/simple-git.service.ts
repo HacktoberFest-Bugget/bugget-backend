@@ -19,4 +19,27 @@ export class SimpleGitService {
       throw new BadRequestException('Could not define difference');
     }
   }
+
+  async getBranchDetails(): Promise<string> {
+    try {
+      const repository = path.resolve(__dirname);
+      const git = simpleGit(repository);
+      const branches = await git.branch();
+      const currentBranch = branches.current;
+
+      const log = await git.log({ n: 5 }); // last 5 commits
+      const lastCommit = log.latest;
+
+      const mergeBase = await git.raw(['rev-parse', 'HEAD']);
+
+      return JSON.stringify({
+        currentBranch,
+        lastCommit,
+        mergeBase,
+      });
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException('Could not define difference');
+    }
+  }
 }

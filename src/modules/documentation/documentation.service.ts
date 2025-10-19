@@ -15,65 +15,18 @@ export class DocumentationService {
     private readonly openaiService: OpenaiService,
   ) {}
 
-  private readonly prompt = `You are a documentation formatter AI.  
-Your task is to analyze a given git diff or merge commit and output a structured Markdown document strictly following the format below.  
-
-Do NOT include any extra commentary or explanations.  
-Only output the formatted Markdown.  
-Follow headings, indentation, and line breaks exactly as shown.
-
----
-
-# CHANGE SUMMARY
-Repository: <repository_name>  
-Branch: <branch_name>  
-Commits: <commit_hashes>  
-Merged by: <username>  
-Date: <date>
-
----
-
-## OVERVIEW
-<Provide a short, high-level summary (2–4 sentences) describing what changed and why.>
-
----
-
-## FILES CHANGED
-| File | Type of Change | Lines Added | Lines Removed |
-|------|----------------|-------------|---------------|
-| <path/to/file> | <Added/Modified/Deleted> | +<n> | -<n> |
-| <path/to/file> | <Added/Modified/Deleted> | +<n> | -<n> |
-
----
-
-## DETAILED ANALYSIS
-
-### Functional Changes
-- <List each significant functional or behavioral change detected.>
-
-### Logic Impact
-- <Describe how the changes affect existing logic, behavior, or flow.>
-
-### Potential Risks
-- <List possible bugs, regressions, or risks introduced.>
-
-### Dependencies
-- Added dependency: \`<name>@<version>\`  
-- Removed dependency: \`<name>\`  
-
----
-
-## CODE SNIPPETS (KEY DIFFS)
-\`\`\`diff
-<insert one or more representative code diff snippets showing key changes>`;
+  private readonly prompt = `You are an expert technical writer and software analyst. INPUT: You will receive a git diff. TASK: Analyze the git diff and produce a Markdown (.md) document that summarizes ONLY the MAJOR NEW FEATURES or SIGNIFICANT FUNCTIONAL ADDITIONS. Completely ignore and exclude minor edits such as: - Small UI changes - Bug fixes - Refactors or code cleanup - Comment, indentation, or formatting changes OUTPUT FORMAT (Markdown): # CHANGE SUMMARY A short overview (2–3 sentences) summarizing the main purpose and scope of the major updates. --- ## New Feature: [Feature or Module Name] A clear and concise explanation (3–6 sentences) describing: - What this feature or addition does - Why it was introduced - How it impacts the system or functionality If helpful for understanding, include ONE short representative code snippet in fenced code blocks showing the most important part of the new feature. Only include it if absolutely necessary. Repeat this section for EACH major new feature or addition. --- RULES: - Focus only on meaningful, functional, or architectural changes. - Use Markdown syntax properly (#, ##, code blocks, etc.). - Be objective, technical, and concise. - The final output should be a complete Markdown document ready for documentation or changelog usage. - do not focus on changes made in terms of documentation, if so just give a small indicator at the top that docs were updated`;
 
   async create(dto: CreateDocumentationDto): Promise<void> {
     try {
       const filename = `${dto.fromBranch}.md`;
       const difference = this.simpleGitService.getDiff(dto);
+      const currentBranchInfo = await this.simpleGitService.getBranchDetails();
 
       const result = await this.openaiService.prompt(
-        `This is my expected ouput from you: ${this.prompt}, this is git difference${difference}`,
+        `This is my expected output from you: ${this.prompt}.\n
+        This is current branch info ${currentBranchInfo} \n
+        this is git difference: ${difference}`,
       );
 
       const existRecord = await this.fileRepository.findOneBy({ filename });
